@@ -1,0 +1,30 @@
+{
+  "name": "chuck-bot",
+  "version": "0.0.0",
+  "description": "ChuckBot",
+  "main": "app.js",
+  "author": {
+    "name": ""
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0"
+  },
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 2018
+    },
+    "rules": {
+      "no-console": "off"
+    }
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "node-telegram-bot-api": "^0.64.0",
+    "uuid": "^9.0.1"
+  }
+}
