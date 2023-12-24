@@ -2,6 +2,4 @@
 # ChuckBot
 
 
-=======
-# NewRepo
->>>>>>> origin/master
+
