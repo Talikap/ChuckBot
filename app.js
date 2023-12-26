@@ -19,14 +19,14 @@ const bot = new TelegramBot(token, { polling: true });
 
 // Proxy and user agent configuration for web scraping
 const proxyArray = process.env.PROXY_ARRAY;
-const userAgents = process.env.USER_AGENTS_ARRAY;
+const userAgentsArray = process.env.USER_AGENTS_ARRAY;
 
 let chuckNorrisJokes = null;
 
 // Function to set up Selenium WebDriver for web scraping
 async function setupDriver() {
-    const proxy = getRandomEntry(proxyArray);//'212.56.139.253:80'
-    const userAgent = getRandomUserAgent(userAgents);
+    const proxy = getRandomEntry(proxyArray);
+    const userAgent = getRandomEntry(userAgentsArray);
 
     const capabilities = Capabilities.chrome();
     capabilities.set('chromeOptions', {
@@ -53,27 +53,21 @@ function getRandomEntry(array) {
     return array[randomIndex];
 }
 
-// Function to get a random user agent from an array
-function getRandomUserAgent(userAgents) {
-    const randomIndex = Math.floor(Math.random() * userAgents.length);
-    return userAgents[randomIndex];
-}
 
 // Function to scrape Chuck Norris jokes from the parade.com website
 async function scrapeJokes() {
     const driver = await setupDriver();
     const jokes = [];
     try {
-        await driver.get('https://parade.com/968666/parade/chuck-norris-jokes/');
+        
+        await driver.get('https://www.google.com/travel/flights/search?tfs=CBwQAhooEgoyMDI0LTAzLTA4agwIAhIIL20vMDdxenZyDAgCEggvbS8wNGpwbBooEgoyMDI0LTAzLTE3agwIAhIIL20vMDRqcGxyDAgCEggvbS8wN3F6dkABSAFwAYIBCwj___________8BmAEB&tfu=CmRDalJJYmpRd1UzbzVSVVYyWW1kQlJsOVplRkZDUnkwdExTMHRMUzB0ZDJWaWVtTXhNMEZCUVVGQlIxZExiVzVKU0V4Sk1EWkJFZ0V4R2dvSWtBSVFBQm9EU1V4VE9DbHc0am89');
         const html = await driver.getPageSource();
-        const jokes = [];
         await driver.sleep(2000);
         //console.log(html);
         const $ = cheerio.load(html);
-        $('li:contains("Chuck")').each((index, element) => {
+        $('li.pIav2d').each((index, element) => {
             jokes.push($(element).text());
         });
-
 
         //console.log('Chuck Norris Jokes:', jokes.length, jokes);
     } catch (error) {
@@ -239,7 +233,7 @@ async function translateText(endpoint, key, location, text, languageCode) {
     }
 }
 
-// Function to handle errors and send a message to the user
+
 function handleError(error, chatId) {
     console.error('Error:', error);
 
@@ -269,7 +263,15 @@ function handleError(error, chatId) {
 
 
 /*
-
+await driver.get('https://parade.com/968666/parade/chuck-norris-jokes/');
+        const html = await driver.getPageSource();
+        const jokes = [];
+        await driver.sleep(2000);
+        //console.log(html);
+        const $ = cheerio.load(html);
+        $('li:contains("Chuck")').each((index, element) => {
+            jokes.push($(element).text());
+        });
 await driver.get('https://www.google.com/travel/flights/search?tfs=CBwQAhooEgoyMDI0LTAzLTA4agwIAhIIL20vMDdxenZyDAgCEggvbS8wNGpwbBooEgoyMDI0LTAzLTE3agwIAhIIL20vMDRqcGxyDAgCEggvbS8wN3F6dkABSAFwAYIBCwj___________8BmAEB&tfu=CmRDalJJYmpRd1UzbzVSVVYyWW1kQlJsOVplRkZDUnkwdExTMHRMUzB0ZDJWaWVtTXhNMEZCUVVGQlIxZExiVzVKU0V4Sk1EWkJFZ0V4R2dvSWtBSVFBQm9EU1V4VE9DbHc0am89');
         const html = await driver.getPageSource();
         await driver.sleep(2000);
