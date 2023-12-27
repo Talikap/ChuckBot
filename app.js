@@ -108,10 +108,12 @@ bot.onText(/\/start/, (msg) => {
     const welcome = "Welcome to the Chuck Norris jokes bot! \nGet ready for 101 wild jokes in any language you like! \nTo kick things off, choose your language with the command: set language <your_language> (e.g., set language english)";
     bot.sendMessage(msg.chat.id, welcome);
 
+
 });
 
 // Variables to store user language and selected joke number
-    let languageCode = null;
+let languageCode = null;
+console.log("language code id null");
 
 // Bot message event handling for different typs of messages
 bot.on('message', async (msg) => {
@@ -120,6 +122,7 @@ bot.on('message', async (msg) => {
     
     if (msg.text.includes("set language")) {
         handleSetLanguageMessage(msg);
+        console.log("languageCode=", languageCode);
     }
     else {
     // Check if the received message is a number between 1 and 101
