@@ -83,6 +83,8 @@ Start chatting by sending: /start
 Choose a language by sending: set language <your-language>
 Get a joke: Enter a number between 1 and 101
 
+![demonstration](https://github.com/Talikap/ChuckBot/blob/master/botGIF.gif?raw=true)
+
 ## Acknowledgments
 
 This project utilizes the Node.js Telegram Bot API library for interacting with the Telegram Bot API. Special thanks to the contributors of the Node.js Telegram Bot API for their work.
