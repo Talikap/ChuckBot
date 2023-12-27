@@ -4,8 +4,11 @@ require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios').default;
 const { v4: uuidv4 } = require('uuid');
+const puppeteer = require('puppeteer');
 const { Builder, Capabilities } = require('selenium-webdriver');
+//const chrome = require('selenium-webdriver/chrome');
 const chrome = require('selenium-webdriver/chrome');
+let proxy = require('selenium-webdriver/proxy');
 const cheerio = require('cheerio');
 
 // Translator API endpoint and keys
@@ -24,17 +27,16 @@ const userAgentsArray = process.env.USER_AGENTS_ARRAY;
 let chuckNorrisJokes = null;
 
 // Function to set up Selenium WebDriver for web scraping
-async function setupDriver() {
-    const proxy = "212.56.139.253:80";//getRandomEntry(proxyArray);
+async function setupBrowser() {
+    const proxyServer = getRandomEntry(proxyArray);// "212.56.139.253:80";
     const userAgent = getRandomEntry(userAgentsArray);
-
     const capabilities = Capabilities.chrome();
     capabilities.set('chromeOptions', {
         args: [
-            `--proxy-server=http://${proxy}`,
+            `--proxy-server=${proxyServer}`,
             `--user-agent=${userAgent}`,
             '--ignore-certificate-errors',
-            'ACCEPT_INSECURE_TLS_CERTS=true',
+            // Add other Chrome options as needed
         ],
     });
 
@@ -46,7 +48,17 @@ async function setupDriver() {
 
     return driver;
 }
+    /*
+    const browser = await puppeteer.launch({ headless: "false" },{
+        args: [
+            `--proxy-server=${proxyServer}`,
+            `--user-agent=${userAgent}`,
+        ],
+    });
 
+    return browser
+}
+*/
 // Function to get a random entry from an array
 function getRandomEntry(array) {
     const randomIndex = Math.floor(Math.random() * array.length);
@@ -55,29 +67,107 @@ function getRandomEntry(array) {
 
 /*
 
-await driver.get('https://parade.com/968666/parade/chuck-norris-jokes/');
-        const html = await driver.getPageSource();
-        await driver.sleep(2000);
+async function setupBrowser() {
+    const proxyServer = getRandomEntry(proxyArray);// "212.56.139.253:80";
+    const userAgent = getRandomEntry(userAgentsArray);
+    const browser = await puppeteer.launch({ headless: "false" }, {
+        args: [
+            `--proxy-server=${proxyServer}`,
+            `--user-agent=${userAgent}`,
+        ],
+    });
+
+    return browser
+}
+async function scrapeJokes() {
+    const browser = await setupBrowser();
+    const page = await browser.newPage();
+    const jokes = [];
+    try {
+        await page.goto('https://parade.com/968666/parade/chuck-norris-jokes/');
+        const html = await page.content();
         console.log(html);
         const $ = cheerio.load(html);
         $('li:contains("Chuck")').each((index, element) => {
             jokes.push($(element).text());
         });
- */
-// Function to scrape Chuck Norris jokes from the parade.com website
+       
+        //console.log('Chuck Norris Jokes:', jokes.length, jokes);
+    } catch (error) {
+        console.error('Error:', error);
+    } finally {
+        await browser.close();
+    }
+    return jokes;
+}
+
+
+
+async function setupBrowser() {
+    const proxyServer = getRandomEntry(proxyArray);// "212.56.139.253:80";
+    const userAgent = getRandomEntry(userAgentsArray);
+    const capabilities = Capabilities.chrome();
+    capabilities.set('chromeOptions', {
+        args: [
+            `--proxy-server=${proxyServer}`,
+            `--user-agent=${userAgent}`,
+            '--ignore-certificate-errors',
+            // Add other Chrome options as needed
+        ],
+    });
+
+    const driver = await new Builder()
+        .forBrowser('chrome')
+        .setChromeOptions(new chrome.Options().setUserPreferences({ credential_enable_service: false }))
+        .withCapabilities(capabilities)
+        .build();
+
+    return driver;
+}
 async function scrapeJokes() {
-    const driver = await setupDriver();
+    const driver = await setupBrowser();
+    //const page = await browser.newPage();
     const jokes = [];
     try {
-        await driver.get('https://www.google.com/travel/flights/search?tfs=CBwQAhooEgoyMDI0LTAzLTA4agwIAhIIL20vMDdxenZyDAgCEggvbS8wNGpwbBooEgoyMDI0LTAzLTE3agwIAhIIL20vMDRqcGxyDAgCEggvbS8wN3F6dkABSAFwAYIBCwj___________8BmAEB&tfu=CmRDalJJYmpRd1UzbzVSVVYyWW1kQlJsOVplRkZDUnkwdExTMHRMUzB0ZDJWaWVtTXhNMEZCUVVGQlIxZExiVzVKU0V4Sk1EWkJFZ0V4R2dvSWtBSVFBQm9EU1V4VE9DbHc0am89');
+        await driver.get('https://parade.com/968666/parade/chuck-norris-jokes/');
         const html = await driver.getPageSource();
-        await driver.sleep(2000);
+        //console.log(html);
+        const $ = cheerio.load(html);
+        $('li:contains("Chuck")').each((index, element) => {
+            jokes.push($(element).text());
+        });
+       
+        //console.log('Chuck Norris Jokes:', jokes.length, jokes);
+    } catch (error) {
+        console.error('Error:', error);
+    } finally {
+        await driver.quit();
+    }
+    return jokes;
+}
+        await page.goto('https://www.google.com/travel/flights/search?tfs=CBwQAhooEgoyMDI0LTAzLTA4agwIAhIIL20vMDdxenZyDAgCEggvbS8wNGpwbBooEgoyMDI0LTAzLTE3agwIAhIIL20vMDRqcGxyDAgCEggvbS8wN3F6dkABSAFwAYIBCwj___________8BmAEB&tfu=CmRDalJJYmpRd1UzbzVSVVYyWW1kQlJsOVplRkZDUnkwdExTMHRMUzB0ZDJWaWVtTXhNMEZCUVVGQlIxZExiVzVKU0V4Sk1EWkJFZ0V4R2dvSWtBSVFBQm9EU1V4VE9DbHc0am89');
+        const html = await page.content();
+        //await driver.sleep(2000);
         //console.log(html);
         const $ = cheerio.load(html);
         $('li.pIav2d').each((index, element) => {
             jokes.push($(element).text());
         });
-        
+      
+ */
+// Function to scrape Chuck Norris jokes from the parade.com website
+async function scrapeJokes() {
+    const driver = await setupBrowser();
+    //const page = await browser.newPage();
+    const jokes = [];
+    try {
+        await driver.get('https://parade.com/968666/parade/chuck-norris-jokes/');
+        const html = await driver.getPageSource();
+        //console.log(html);
+        const $ = cheerio.load(html);
+        $('li:contains("Chuck")').each((index, element) => {
+            jokes.push($(element).text());
+        });
 
         //console.log('Chuck Norris Jokes:', jokes.length, jokes);
     } catch (error) {
@@ -93,15 +183,12 @@ scrapeJokes()
     .then(jokes => {
         // Do something with the jokes
         chuckNorrisJokes = jokes
-        console.log('Jokes:', chuckNorrisJokes);
+        //console.log('Jokes:', chuckNorrisJokes);
 
         // Wait for 5 seconds before proceeding
-        return new Promise(resolve => setTimeout(resolve, 5000));
+        //return new Promise(resolve => setTimeout(resolve, 5000));
     })
-    .then(() => {
-        // Continue with the rest of your code after the delay
-        console.log('Finished scraping jokes and waiting.');
-    })
+
     .catch(error => {
         // Handle errors
         console.error('Error:', error);
@@ -125,24 +212,35 @@ let userLanguage = null;
 let jokeNumber = null;
 let languageCode = null;
 
-// Bot message event handling
+// Bot message event handling for different typs of messages
 bot.on('message', async (msg) => {
-    console.log(msg.text);
+    //console.log(msg.text);
 
     if (msg.text.includes("set language")) {
         handleSetLanguageMessage(msg);
     }
-
+    else {
     // Check if the received message is a number between 1 and 101
-    const userNum = parseInt(msg.text, 10);
-    if (!isNaN(userNum) && userNum >= 1 && userNum <= 101) {
-        console.log("languageCode:", languageCode);
-        if (languageCode !== null) {
-            handleNumberMessage(msg, userNum);
-        } else {
-            bot.sendMessage(msg.chat.id, "set language first");
+        const userNum = parseInt(msg.text, 10);
+        if (!isNaN(userNum)) {
+            if (userNum >= 1 && userNum <= 101) {
+                //console.log("languageCode:", languageCode);
+                if (languageCode !== null) {
+                    handleNumberMessage(msg, userNum);
+                } else {
+                    bot.sendMessage(msg.chat.id, "set language first");
+                }
+            }
+            else {
+                bot.sendMessage(msg.chat.id, "please Select a number between 1-101");
+            }
+        }
+        else if (!msg.text.includes("start")){
+            bot.sendMessage(msg.chat.id, "either set language or choose a joke");
         }
     }
+    
+    
 });
 
 // Function to handle setting the language
@@ -163,7 +261,7 @@ async function handleSetLanguageMessage(msg) {
             }
         } else {
             const errorMessage = `${userLanguage} is not supported for translation.\nPlease choose a different language.`;
-            console.error(errorMessage);
+            //console.error(errorMessage);
             bot.sendMessage(msg.chat.id, errorMessage);
         }
     } catch (error) {
@@ -272,112 +370,3 @@ function handleError(error, chatId) {
 
 
 
-/*
-await driver.get('https://parade.com/968666/parade/chuck-norris-jokes/');
-        const html = await driver.getPageSource();
-        const jokes = [];
-        await driver.sleep(2000);
-        //console.log(html);
-        const $ = cheerio.load(html);
-        $('li:contains("Chuck")').each((index, element) => {
-            jokes.push($(element).text());
-        });
-await driver.get('https://www.google.com/travel/flights/search?tfs=CBwQAhooEgoyMDI0LTAzLTA4agwIAhIIL20vMDdxenZyDAgCEggvbS8wNGpwbBooEgoyMDI0LTAzLTE3agwIAhIIL20vMDRqcGxyDAgCEggvbS8wN3F6dkABSAFwAYIBCwj___________8BmAEB&tfu=CmRDalJJYmpRd1UzbzVSVVYyWW1kQlJsOVplRkZDUnkwdExTMHRMUzB0ZDJWaWVtTXhNMEZCUVVGQlIxZExiVzVKU0V4Sk1EWkJFZ0V4R2dvSWtBSVFBQm9EU1V4VE9DbHc0am89');
-        const html = await driver.getPageSource();
-        await driver.sleep(2000);
-        //console.log(html);
-        const $ = cheerio.load(html);
-        $('li.pIav2d').each((index, element) => {
-            jokes.push($(element).text());
-        });
-
-
-await driver.get('https://parade.com/968666/parade/chuck-norris-jokes/');
-        const html = await driver.getPageSource();
-        const jokes = [];
-        await driver.sleep(2000);
-        //console.log(html);
-        const $ = cheerio.load(html);
-        $('li:contains("Chuck")').each((index, element) => {
-            jokes.push($(element).text());
-        });
-
-const puppeteer = require('puppeteer');
-
-(async () => {
-    const proxy = 'http://2.137.22.252:4153';
-
-    const browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--ignore-certificate-errors'],
-    });
-
-    const page = await browser.newPage();
-
-    await page.goto('https://parade.com/968666/parade/chuck-norris-jokes/');
-
-    const html = await page.content();
-    console.log(html);
-
-    const jokes = [];
-
-    // Puppeteer doesn't have a built-in equivalent to Cheerio, so you can use a library like cheerio-puppeteer
-    // Install it using: npm install cheerio-puppeteer
-    const cheerio = require('cheerio');
-    const $ = cheerio.load(html);
-
-    // Find all <li> elements containing the word 'Chuck'
-    $('li:contains("Chuck")').each((index, element) => {
-        jokes.push($(element).text());
-    });
-
-    // Print the jokes array
-    console.log(jokes.length);
-    console.log('Chuck Norris Jokes:', jokes);
-
-    await browser.close();
-})();
-
-const puppeteer = require('puppeteer');
-
-
-
-// Function to rotate proxies
-function rotateProxy() {
-    const rotatedProxy = proxies.shift();
-    proxies.push(rotatedProxy);
-    return rotatedProxy;
-}
-
-async function runWithRotatedProxy() {
-    const rotatedProxy = rotateProxy();
-    const browser = await puppeteer.launch({ headless: "new", args: [`--proxy-server=${rotatedProxy}`] });
-
-    try {
-        const page = await browser.newPage();
-
-        // Intercept requests to set Proxy-Authorization header
-        await page.setRequestInterception(true);
-
-        page.on('request', (request) => {
-            const proxyURL = new URL(rotatedProxy);
-            const proxyAuthorization = Buffer.from(`${proxyURL.username}:${proxyURL.password}`).toString('base64');
-            request.headers['Proxy-Authorization'] = `Basic ${proxyAuthorization}`;
-            request.continue();
-        });
-
-        await page.goto('https://www.google.com', { waitUntil: 'domcontentloaded' });
-
-        const pageTitle = await page.title();
-        console.log(`Title with rotated proxy ${rotatedProxy}: ${pageTitle}`);
-    } catch (error) {
-        console.error(`Error with rotated proxy ${rotatedProxy}: ${error}`);
-    } finally {
-        await browser.close();
-    }
-}
-
-// Run the code with rotated proxy
-runWithRotatedProxy();
-
-
-*/
