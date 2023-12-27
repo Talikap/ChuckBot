@@ -92,7 +92,7 @@ scrapeJokes()
         //console.log('Jokes:', chuckNorrisJokes);
 
         // Wait for 5 seconds before proceeding
-        //return new Promise(resolve => setTimeout(resolve, 5000));
+        return new Promise(resolve => setTimeout(resolve, 5000));
     })
 
     .catch(error => {
@@ -105,23 +105,19 @@ scrapeJokes()
 // Bot command to start and set language
 bot.onText(/\/start/, (msg) => {
 
-    const welcome = "Welcome to the Chuck Norris jokes bot! \nGet ready for 101 wild jokes in any language you like!";
-    const languageInstructions = "To kick things off, choose your language with the command: set language <your_language> (e.g., set language english)";
-
+    const welcome = "Welcome to the Chuck Norris jokes bot! \nGet ready for 101 wild jokes in any language you like! \nTo kick things off, choose your language with the command: set language <your_language> (e.g., set language english)";
     bot.sendMessage(msg.chat.id, welcome);
-    bot.sendMessage(msg.chat.id, languageInstructions);
 
 });
 
 // Variables to store user language and selected joke number
-let userLanguage = null;
-let jokeNumber = null;
-let languageCode = null;
+    let languageCode = null;
 
 // Bot message event handling for different typs of messages
 bot.on('message', async (msg) => {
     //console.log(msg.text);
 
+    
     if (msg.text.includes("set language")) {
         handleSetLanguageMessage(msg);
     }
@@ -129,9 +125,12 @@ bot.on('message', async (msg) => {
     // Check if the received message is a number between 1 and 101
         const userNum = parseInt(msg.text, 10);
         if (!isNaN(userNum)) {
+            //console.log("is a number");
             if (userNum >= 1 && userNum <= 101) {
+                //console.log("good range");
+                //console.log("languageCode=", languageCode);
                 if (languageCode !== null) {
-                    handleNumberMessage(msg, userNum);
+                    handleNumberMessage(msg, userNum, languageCode);
                 } else {
                     bot.sendMessage(msg.chat.id, "Hold up! Set your language first, then you can choose a joke.");
                 }
@@ -150,7 +149,7 @@ bot.on('message', async (msg) => {
 
 // Function to handle setting the language
 async function handleSetLanguageMessage(msg) {
-    userLanguage = msg.text.split(" ")[2];
+    const userLanguage = msg.text.split(" ")[2];
 
     try {
         languageCode = await getLanguageCode(userLanguage);
@@ -175,8 +174,8 @@ async function handleSetLanguageMessage(msg) {
 }
 
 // Function to handle processing a number message
-async function handleNumberMessage(msg, userNum) {
-    jokeNumber = userNum;
+async function handleNumberMessage(msg, userNum, languageCode) {
+    const jokeNumber = userNum;
 
     const translationResult = await translateText(endpoint, key, location, chuckNorrisJokes[jokeNumber - 1], languageCode);
 
