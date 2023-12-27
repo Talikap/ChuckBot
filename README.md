@@ -83,7 +83,7 @@ Start chatting by sending: /start
 Choose a language by sending: set language <your-language>
 Get a joke: Enter a number between 1 and 101
 
-![demonstration]([https://github.com/Talikap/ChuckBot/blob/master/botGIF.gif?raw=true](https://github.com/Talikap/ChuckBot/blob/master/ChuckBot.gif?raw=true))
+![demonstration](https://github.com/Talikap/ChuckBot/blob/master/ChuckBot.gif?raw=true)
 
 ## Acknowledgments
 
