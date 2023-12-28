@@ -90,7 +90,7 @@ scrapeJokes()
     .then(jokes => {
         // Do something with the jokes
         chuckNorrisJokes = jokes
-        //console.log('Jokes:', chuckNorrisJokes);
+        console.log('Jokes:', chuckNorrisJokes);
 
         // Wait for 5 seconds before proceeding
         return new Promise(resolve => setTimeout(resolve, 5000));
@@ -157,9 +157,10 @@ async function handleSetLanguageMessage(msg) {
 
     try {
         languageCode = await getLanguageCode(userLanguage);
-
+        console.log("got languageCodel ", languageCode);
         if (languageCode !== null) {
             const noProblem = "No problem \nplease Pick a number between 1-101 to get a joke";
+            console.log("translate first message");
             const translationResult = await translateText(endpoint, key, location, noProblem, languageCode);
 
             if (translationResult !== null) {
@@ -193,16 +194,19 @@ async function handleNumberMessage(msg, userNum, languageCode) {
 
 // Function to detect the language and get its two-letter code
 async function getLanguageCode(inputLanguage) {
+    console.log("inside getLanguageCode");
     try {
+        console.log("requesting languages");
         const response = await axios.get(`${endpoint}/languages?api-version=3.0&scope=translation`);
         const supportedLanguages = response.data.translation;
-
+        console.log("supportedLanguages:\n", supportedLanguages)
         for (const code in supportedLanguages) {
             if (supportedLanguages[code].name.toLowerCase() === inputLanguage.toLowerCase()) {
+                console.log("code to return: ", code);
                 return code;
             }
         }
-
+        console.log("return null");
         return null;
     } catch (error) {
         handleError(error);
