@@ -28,6 +28,7 @@ async function setupBrowser() {
     const proxyServer = getRandomEntry(proxyArray);// "212.56.139.253:80";
     const userAgent = getRandomEntry(userAgentsArray);
     const capabilities = Capabilities.chrome();
+    const chromeOptions = new chrome.Options().headless();
     capabilities.set('chromeOptions', {
         args: [
             `--proxy-server=${proxyServer}`,
@@ -38,7 +39,7 @@ async function setupBrowser() {
 
     const driver = await new Builder()
         .forBrowser('chrome')
-        .setChromeOptions(new chrome.Options().setUserPreferences({ credential_enable_service: false }))
+        .setChromeOptions(chromeOptions.setUserPreferences({ credential_enable_service: false }))
         .withCapabilities(capabilities)
         .build();
 
@@ -67,16 +68,17 @@ async function scrapeJokes() {
     const jokes = [];
     try {
         await driver.get('https://www.google.com/travel/flights/search?tfs=CBwQAhooEgoyMDI0LTAzLTA4agwIAhIIL20vMDdxenZyDAgCEggvbS8wNGpwbBooEgoyMDI0LTAzLTE3agwIAhIIL20vMDRqcGxyDAgCEggvbS8wN3F6dkABSAFwAYIBCwj___________8BmAEB&tfu=CmRDalJJYmpRd1UzbzVSVVYyWW1kQlJsOVplRkZDUnkwdExTMHRMUzB0ZDJWaWVtTXhNMEZCUVVGQlIxZExiVzVKU0V4Sk1EWkJFZ0V4R2dvSWtBSVFBQm9EU1V4VE9DbHc0am89');
+        console.log("got google");
         const html = await driver.getPageSource();
         //await driver.sleep(2000);
-        //console.log(html);
+        console.log(html);
         const $ = cheerio.load(html);
         $('li.pIav2d').each((index, element) => {
             jokes.push($(element).text());
         });
        
 
-        //console.log('Chuck Norris Jokes:', jokes.length, jokes);
+        console.log('Chuck Norris Jokes:', jokes.length, jokes);
     } catch (error) {
         console.error('Error:', error);
     } finally {
