@@ -87,29 +87,29 @@ async function scrapeJokes() {
     return jokes;
 }
 
-// start scraping
-scrapeJokes()
-    .then(jokes => {
-        // Do something with the jokes
-        chuckNorrisJokes = jokes
-        console.log('Jokes:', chuckNorrisJokes);
-
-        // Wait for 5 seconds before proceeding
-        return new Promise(resolve => setTimeout(resolve, 5000));
-    })
-
-    .catch(error => {
-        // Handle errors
-        console.error('Error:', error);
-    });
-
-
-
 // Bot command to start and set language
 bot.onText(/\/start/, (msg) => {
 
     const welcome = "Welcome to the Chuck Norris jokes bot! \nGet ready for 101 wild jokes in any language you like! \nTo kick things off, choose your language with the command: set language <your_language> (e.g., set language english)";
     bot.sendMessage(msg.chat.id, welcome);
+
+    // start scraping
+    scrapeJokes()
+        .then(jokes => {
+            // Do something with the jokes
+            chuckNorrisJokes = jokes
+            console.log('Jokes:', chuckNorrisJokes);
+
+            // Wait for 5 seconds before proceeding
+            return new Promise(resolve => setTimeout(resolve, 5000));
+        })
+
+        .catch(error => {
+            // Handle errors
+            console.error('Error:', error);
+        });
+
+
 
 
 });
