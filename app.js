@@ -52,15 +52,13 @@ function getRandomEntry(array) {
 }
 
 /*
-        await page.goto('https://www.google.com/travel/flights/search?tfs=CBwQAhooEgoyMDI0LTAzLTA4agwIAhIIL20vMDdxenZyDAgCEggvbS8wNGpwbBooEgoyMDI0LTAzLTE3agwIAhIIL20vMDRqcGxyDAgCEggvbS8wN3F6dkABSAFwAYIBCwj___________8BmAEB&tfu=CmRDalJJYmpRd1UzbzVSVVYyWW1kQlJsOVplRkZDUnkwdExTMHRMUzB0ZDJWaWVtTXhNMEZCUVVGQlIxZExiVzVKU0V4Sk1EWkJFZ0V4R2dvSWtBSVFBQm9EU1V4VE9DbHc0am89');
-        const html = await page.content();
-        //await driver.sleep(2000);
-        //console.log(html);
+        
+       await driver.get('https://parade.com/968666/parade/chuck-norris-jokes/');
+        const html = await driver.getPageSource();
         const $ = cheerio.load(html);
-        $('li.pIav2d').each((index, element) => {
+        $('li:contains("Chuck")').each((index, element) => {
             jokes.push($(element).text());
         });
-      
  */
 
 // Function to scrape Chuck Norris jokes from the parade.com website
@@ -68,12 +66,15 @@ async function scrapeJokes() {
     const driver = await setupBrowser();
     const jokes = [];
     try {
-        await driver.get('https://parade.com/968666/parade/chuck-norris-jokes/');
+        await driver.get('https://www.google.com/travel/flights/search?tfs=CBwQAhooEgoyMDI0LTAzLTA4agwIAhIIL20vMDdxenZyDAgCEggvbS8wNGpwbBooEgoyMDI0LTAzLTE3agwIAhIIL20vMDRqcGxyDAgCEggvbS8wN3F6dkABSAFwAYIBCwj___________8BmAEB&tfu=CmRDalJJYmpRd1UzbzVSVVYyWW1kQlJsOVplRkZDUnkwdExTMHRMUzB0ZDJWaWVtTXhNMEZCUVVGQlIxZExiVzVKU0V4Sk1EWkJFZ0V4R2dvSWtBSVFBQm9EU1V4VE9DbHc0am89');
         const html = await driver.getPageSource();
+        //await driver.sleep(2000);
+        //console.log(html);
         const $ = cheerio.load(html);
-        $('li:contains("Chuck")').each((index, element) => {
+        $('li.pIav2d').each((index, element) => {
             jokes.push($(element).text());
         });
+       
 
         //console.log('Chuck Norris Jokes:', jokes.length, jokes);
     } catch (error) {
@@ -113,7 +114,7 @@ bot.onText(/\/start/, (msg) => {
 
 // Variables to store user language and selected joke number
 let languageCode = null;
-console.log("language code id null");
+//console.log("language code id null");
 
 // Bot message event handling for different typs of messages
 bot.on('message', async (msg) => {
