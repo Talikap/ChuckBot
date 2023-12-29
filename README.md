@@ -2,7 +2,7 @@
 ChuckBot
 
 ## Description
-Chuck Norris Jokes Telegram Bot
+Chuck Norris Jokes Telegram Bot<br>
 A Telegram bot that fetches Chuck Norris jokes and translates them into different languages using Azure Cognitive Services.
 
 ## Table of Contents
@@ -77,10 +77,10 @@ node app.js
 ```
 Interact with the bot on Telegram: 
 
-1.Go to telegram app and search tali_chuck_bot
-2.Start chatting by sending: /start
-3.Choose a language by sending: set language <your-language>
-4.Get a joke: Enter a number between 1 and 101
+1.Go to telegram app and search tali_chuck_bot<br>
+2.Start chatting by sending: /start<br>
+3.Choose a language by sending: set language <your-language><br>
+4.Get a joke: Enter a number between 1 and 101<br>
 
 ![demonstration](https://github.com/Talikap/ChuckBot/blob/master/ChuckBot.gif?raw=true)
 
