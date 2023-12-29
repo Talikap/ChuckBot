@@ -69,13 +69,12 @@ PROXY_ARRAY=<Array-of-Proxies>
 USER_AGENTS_ARRAY=<Array-of-User-Agents>
 ```
 
-##Usage
+**##Usage
 Start the bot:
 
-bash
-Copy code
+```bash
 node app.js
-
+```
 Interact with the bot on Telegram: 
 
 Go to telegram app and search tali_chuck_bot
