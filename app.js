@@ -23,17 +23,50 @@ const userAgentsArray = process.env.USER_AGENTS_ARRAY;
 
 let chuckNorrisJokes = null;
 
+// start scraping
+scrapeJokes()
+    .then(jokes => {
+        chuckNorrisJokes = jokes
+        // Wait for 2 seconds before proceeding
+        return new Promise(resolve => setTimeout(resolve, 2000));
+    })
+    .catch(error => {
+        // Handle errors
+        console.error('Error:', error);
+    });
+
+// Function to scrape Chuck Norris jokes from the parade.com website
+async function scrapeJokes() {
+    const driver = await setupBrowser();
+    const jokes = [];
+    try {
+        await driver.get('https://parade.com/968666/parade/chuck-norris-jokes/');
+        const html = await driver.getPageSource();
+        const $ = cheerio.load(html);
+        $('li:contains("Chuck")').each((index, element) => {
+            jokes.push($(element).text());
+        });
+        
+    } catch (error) {
+        console.error('Error:', error);
+    } finally {
+        await driver.quit();
+    }
+    return jokes;
+}
 // Function to set up Selenium WebDriver for web scraping
 async function setupBrowser() {
-    const proxyServer = getRandomEntry(proxyArray);// "212.56.139.253:80";
+    const proxyServer = getRandomEntry(proxyArray);
     const userAgent = getRandomEntry(userAgentsArray);
     const capabilities = Capabilities.chrome();
     const chromeOptions = new chrome.Options().headless();
+    chromeOptions.addArguments("--no-sandbox");
+    chromeOptions.addArguments("--disable-dev-shm-usage");
     capabilities.set('chromeOptions', {
         args: [
             `--proxy-server=${proxyServer}`,
             `--user-agent=${userAgent}`,
-            '--ignore-certificate-errors',
+            '--ignore-certificate-errors'
         ],
     });
 
@@ -52,89 +85,30 @@ function getRandomEntry(array) {
     return array[randomIndex];
 }
 
-/*
-        
-       await driver.get('https://parade.com/968666/parade/chuck-norris-jokes/');
-        const html = await driver.getPageSource();
-        const $ = cheerio.load(html);
-        $('li:contains("Chuck")').each((index, element) => {
-            jokes.push($(element).text());
-        });
- */
 
-// Function to scrape Chuck Norris jokes from the parade.com website
-async function scrapeJokes() {
-    const driver = await setupBrowser();
-    const jokes = [];
-    try {
-        await driver.get('https://www.google.com/travel/flights/search?tfs=CBwQAhooEgoyMDI0LTAzLTA4agwIAhIIL20vMDdxenZyDAgCEggvbS8wNGpwbBooEgoyMDI0LTAzLTE3agwIAhIIL20vMDRqcGxyDAgCEggvbS8wN3F6dkABSAFwAYIBCwj___________8BmAEB&tfu=CmRDalJJYmpRd1UzbzVSVVYyWW1kQlJsOVplRkZDUnkwdExTMHRMUzB0ZDJWaWVtTXhNMEZCUVVGQlIxZExiVzVKU0V4Sk1EWkJFZ0V4R2dvSWtBSVFBQm9EU1V4VE9DbHc0am89');
-        console.log("got google");
-        const html = await driver.getPageSource();
-        //await driver.sleep(2000);
-        console.log(html);
-        const $ = cheerio.load(html);
-        $('li.pIav2d').each((index, element) => {
-            jokes.push($(element).text());
-        });
-       
-
-        console.log('Chuck Norris Jokes:', jokes.length, jokes);
-    } catch (error) {
-        console.error('Error:', error);
-    } finally {
-        await driver.quit();
-    }
-    return jokes;
-}
-
-// Bot command to start and set language
+// Bot command to start chat
 bot.onText(/\/start/, (msg) => {
 
-    const welcome = "Welcome to the Chuck Norris jokes bot! \nGet ready for 101 wild jokes in any language you like! \nTo kick things off, choose your language with the command: set language <your_language> (e.g., set language english)";
+    const welcome = "Welcome to the Chuck Norris jokes bot! \nGet ready for 101 wild jokes in any language you like!";
+    const choose = "To kick things off, choose your language with the command: set language <your_language> (e.g., set language english)";
     bot.sendMessage(msg.chat.id, welcome);
-
-    // start scraping
-    scrapeJokes()
-        .then(jokes => {
-            // Do something with the jokes
-            chuckNorrisJokes = jokes
-            console.log('Jokes:', chuckNorrisJokes);
-
-            // Wait for 5 seconds before proceeding
-            return new Promise(resolve => setTimeout(resolve, 5000));
-        })
-
-        .catch(error => {
-            // Handle errors
-            console.error('Error:', error);
-        });
-
-
-
-
+    bot.sendMessage(msg.chat.id, choose);
 });
 
-// Variables to store user language and selected joke number
+// Variables to store user language 
 let languageCode = null;
-//console.log("language code id null");
 
 // Bot message event handling for different typs of messages
 bot.on('message', async (msg) => {
-    //console.log(msg.text);
 
-    
     if (msg.text.includes("set language")) {
         handleSetLanguageMessage(msg);
-        console.log("languageCode=", languageCode);
     }
     else {
-    // Check if the received message is a number between 1 and 101
+        // Check if the received message is a number between 1 and 101
         const userNum = parseInt(msg.text, 10);
         if (!isNaN(userNum)) {
-            //console.log("is a number");
             if (userNum >= 1 && userNum <= 101) {
-                //console.log("good range");
-                //console.log("languageCode=", languageCode);
                 if (languageCode !== null) {
                     handleNumberMessage(msg, userNum, languageCode);
                 } else {
@@ -145,24 +119,23 @@ bot.on('message', async (msg) => {
                 bot.sendMessage(msg.chat.id, "Pick a number between 1 and 101!");
             }
         }
-        else if (!msg.text.includes("start")){
+        // case for an unknown message
+        else if (!msg.text.includes("start")) {
             bot.sendMessage(msg.chat.id, "Sorry, I didn't get that. Either set your language or choose a joke.");
         }
     }
-    
-    
+
+
 });
 
-// Function to handle setting the language
+// Function to handle setting the language that the user chose
 async function handleSetLanguageMessage(msg) {
     const userLanguage = msg.text.split(" ")[2];
 
     try {
         languageCode = await getLanguageCode(userLanguage);
-        console.log("got languageCodel ", languageCode);
         if (languageCode !== null) {
             const noProblem = "No problem \nplease Pick a number between 1-101 to get a joke";
-            console.log("translate first message");
             const translationResult = await translateText(endpoint, key, location, noProblem, languageCode);
 
             if (translationResult !== null) {
@@ -172,7 +145,6 @@ async function handleSetLanguageMessage(msg) {
             }
         } else {
             const errorMessage = `Oops! ${userLanguage} is not supported for translation.\nTry picking another language.`;
-            //console.error(errorMessage);
             bot.sendMessage(msg.chat.id, errorMessage);
         }
     } catch (error) {
@@ -196,19 +168,14 @@ async function handleNumberMessage(msg, userNum, languageCode) {
 
 // Function to detect the language and get its two-letter code
 async function getLanguageCode(inputLanguage) {
-    console.log("inside getLanguageCode");
     try {
-        console.log("requesting languages");
         const response = await axios.get(`${endpoint}/languages?api-version=3.0&scope=translation`);
         const supportedLanguages = response.data.translation;
-        console.log("supportedLanguages:\n", supportedLanguages)
         for (const code in supportedLanguages) {
             if (supportedLanguages[code].name.toLowerCase() === inputLanguage.toLowerCase()) {
-                console.log("code to return: ", code);
                 return code;
             }
         }
-        console.log("return null");
         return null;
     } catch (error) {
         handleError(error);
