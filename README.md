@@ -46,6 +46,7 @@ The web scraping process is designed to overcome common challenges, including CA
 
 Install dependencies using the npm install bash command:
 
+bash
 dotenv
 node-telegram-bot-api
 axios
@@ -78,7 +79,7 @@ node app.js
 
 Interact with the bot on Telegram: 
 
-Go to telegram app and search talis_chuck_bot
+Go to telegram app and search tali_chuck_bot
 Start chatting by sending: /start
 Choose a language by sending: set language <your-language>
 Get a joke: Enter a number between 1 and 101
