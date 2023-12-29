@@ -1,26 +1,25 @@
-Project Name
+# Project Name
 ChuckBot
 
-Description
+## Description
 # Chuck Norris Jokes Telegram Bot
 
 A Telegram bot that fetches Chuck Norris jokes and translates them into different languages using Azure Cognitive Services.
 
-Table of Contents
-Features
-Installation
-Usage
-Contributing
-License
-Features
+## Table of Contents
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Web Scraping and Overcoming CAPTCHA Challenges](#web-scraping-and-overcoming-captcha-challenges)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Acknowledgments](#acknowledgments)
 
 ## Features
 
 - This Telegram bot utilizes web scraping to fetch Chuck Norris jokes from the parade.com website.
-- Fetchs Chuck Norris jokes in multiple languages.
+- Fetches Chuck Norris jokes in multiple languages.
 - Translates jokes into the language of your choice.
-- serves a collection of 101 hilarious jokes.
-
+- Serves a collection of 101 hilarious jokes.
 
 ## Prerequisites
 
@@ -29,7 +28,7 @@ Features
 - Telegram Bot API token
 - Selenium WebDriver and Chrome installed on the machine
 
-## Web Scraping and Challenges and vercoming CAPTCHA Obstacles
+## Web Scraping and Overcoming CAPTCHA Challenges
 
 The web scraping process is designed to overcome common challenges, including CAPTCHAs. Here's how it works:
 
@@ -41,8 +40,10 @@ The web scraping process is designed to overcome common challenges, including CA
 
 1. Clone the repository:
 
+   ```bash
    git clone https://github.com/Talikap/ChuckBot.git
    cd ChuckBot
+
 
 Install dependencies using the npm install bash command:
 
