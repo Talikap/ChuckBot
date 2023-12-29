@@ -46,7 +46,7 @@ The web scraping process is designed to overcome common challenges, including CA
 
 Install dependencies using the npm install bash command:
 
-bash
+```markdown
 dotenv
 node-telegram-bot-api
 axios
@@ -56,11 +56,11 @@ chrome
 cheerio
 
 
-Set up environment variables:
+**Set up environment variables:**
 
-Create a .env file in the project root with the following content:
+Create a `.env` file in the project root with the following content:
 
-env
+```env
 Copy code
 ENDPOINT=<Your-Translator-Endpoint>
 TRANSLATOR_KEY=<Your-Translator-API-Key>
