@@ -69,8 +69,8 @@ API_TOKEN=<Your-Telegram-Bot-API-Token>
 PROXY_ARRAY=<Array-of-Proxies>
 USER_AGENTS_ARRAY=<Array-of-User-Agents>
 ```
+## Usage
 
-**##Usage
 Start the bot:
 
 ```bash
