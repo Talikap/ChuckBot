@@ -67,6 +67,7 @@ RESOURCE_LOCATION=<Your-Resource-Location>
 API_TOKEN=<Your-Telegram-Bot-API-Token>
 PROXY_ARRAY=<Array-of-Proxies>
 USER_AGENTS_ARRAY=<Array-of-User-Agents>
+```
 
 ##Usage
 Start the bot:
