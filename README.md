@@ -46,22 +46,21 @@ The web scraping process is designed to overcome common challenges, including CA
 
 Install dependencies using the npm install bash command:
 
-```markdown
-dotenv
-node-telegram-bot-api
-axios
-uuid
-selenium-webdriver
-chrome
-cheerio
+# Project Dependencies
 
+- dotenv
+- node-telegram-bot-api
+- axios
+- uuid
+- selenium-webdriver
+- chrome
+- cheerio
 
-**Set up environment variables:**
+## Set up environment variables:
 
 Create a `.env` file in the project root with the following content:
 
 ```env
-Copy code
 ENDPOINT=<Your-Translator-Endpoint>
 TRANSLATOR_KEY=<Your-Translator-API-Key>
 RESOURCE_LOCATION=<Your-Resource-Location>
@@ -69,8 +68,7 @@ API_TOKEN=<Your-Telegram-Bot-API-Token>
 PROXY_ARRAY=<Array-of-Proxies>
 USER_AGENTS_ARRAY=<Array-of-User-Agents>
 
-
-Usage
+##Usage
 Start the bot:
 
 bash
